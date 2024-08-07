@@ -88,6 +88,28 @@ class Library:
             3:Book(3, "Sign of the artificial Pearls")
         }
 
+    def add_books(self):
+        while True:
+            while True:
+                user_book = input("Enter your book's name: ").strip()
+                if is_alpha_numeric(user_book):  # Check if the book name is alphanumeric
+                    user_book_lower = user_book.lower()
+                    # Check if the book is already available in the library
+                    if any(user_book_lower == book.name.lower() for book in library.library_books.values()):
+                        print("This book is already in the library, please enter a unique name.")
+                    else:
+                        break
+                else:
+                    print("Please enter an alphanumeric name.")
+
+            book_id_ = sorted(library.library_books.keys())[-1] + 1
+            if book_id_ not in library.library_books:
+                library.library_books[book_id_] = Book(book_id_, user_book)
+                print(f"Book '{user_book}' added successfully with ID {book_id_}.")
+
+            add_choice = input("Do you want to add another book? (y/n): ")
+            if not y_or_n(add_choice):
+                break
 
     def display_available_books(self):
         # Displays books with 'Free' availability.
@@ -129,19 +151,13 @@ class Library:
 
         if closest_match:
             # CLosest match to the book that is borrowed
-            while True:
-                confirm = input(f"\nDid you mean '{closest_match}'? (y/n): ")
-                if confirm.lower() == 'y':
-                    for book in self.library_books.values():
-                        if book.name == closest_match and book.availability == "Free":
-                            book.borrow_book(username)
-                            return
-                elif confirm.lower() == 'n':
-                    print("Book not found or not available.")
-                    return False
-                else:
-                    print("Choose either 'y' or 'n' (Yes/No)")
-        print("Book not found or not available.")
+            confirm = input(f"\nDid you mean '{closest_match}'? (y/n): ")
+            if y_or_n(confirm):
+                for book in self.library_books.values():
+                    if book.name == closest_match and book.availability == "Free":
+                        book.borrow_book(username)
+                        return
+            print("Book not found")
 
     def return_book(self, username):
         # User returns a book
@@ -161,18 +177,12 @@ class Library:
 
         if closest_match:
             # CLosest match to the book that is borrowed
-            while True:
-                confirm = input(f"Did you mean '{closest_match}'? (y/n): ")
-                if confirm.lower() == 'y':
-                    for book in self.library_books.values():
-                        if book.name == closest_match and book.borrower == username:
-                            book.return_book(username)
-                            return
-                elif confirm.lower() == 'n':
-                    return False
-                else:
-                    print("Enter either 'y' or 'n' (Yes/No)")
-
+            confirm = input(f"Did you mean '{closest_match}'? (y/n): ")
+            if y_or_n(confirm):
+                for book in self.library_books.values():
+                    if book.name == closest_match and book.borrower == username:
+                        book.return_book(username)
+                        return
         print("Book not found in your borrowed list.")
 
 def is_alpha_numeric(username):
@@ -189,6 +199,14 @@ def is_alpha_numeric(username):
         return all(char.isalnum() or char.isspace() for char in username)
     return False  # Return False if username is empty
 
+def y_or_n(answer):
+    while True:
+        if answer.lower() == "y":
+            return True
+        elif answer.lower() == 'n':
+            return False
+        else:
+            print("Enter either 'y' or 'n' (Yes/No)")
 
 if __name__ == "__main__":
     # This block ensures the code within it only runs if the script is executed directly
@@ -202,56 +220,15 @@ if __name__ == "__main__":
 
     library = Library()
 
-    def add_books():
-        while True: # Loops through until the user enters a correct input
-            add_choice = input("Do you want to add a book? (y/n): ")
-            if add_choice.lower() == 'y':
-                while True:
-                    user_book = input("Enter your book's name: ").strip()
-                    if is_alpha_numeric(user_book):  # Check if the book name is alphanumeric
-                        user_book_lower = user_book.lower()
-                        # Check if the book is already available in the library
-                        if any(user_book_lower == book.name.lower() for book
-                               in library.library_books.values()):
-                            print("This book is already in the library please enter a unique name.")
-                        else:
-                            break
-                    else:
-                        print("Please enter an alphanumeric name.")
-
-                while True: # Loops through until the user enters a correct input
-                    try:
-                        book_id_ = int(input(
-                            "Enter a unique ID for the book (IDs 1, 2, and 3 are already taken): ")
-                            .strip())
-                        if book_id_ >= 0:
-                            if book_id_ not in library.library_books:  # Check if the ID is unique
-                                library.library_books[book_id_] = Book(book_id_, user_book)
-                                print(f"Book '{user_book}' added successfully with ID {book_id_}.")
-                                break  # Stops loop when condition "ID >= 0" is met
-                            else:
-                                print("Book ID is already taken, please enter a unique ID")
-                        else:
-                            print("Enter a natural number greater than 0.")
-                    except ValueError:
-                        print("Enter a number for the ID.")
-
-            elif add_choice.lower() == 'n':
-                return False  # Exit when user does not want to add a book
-            else:
-                print("Please enter 'y' for yes or 'n' for no.")
-
-    while add_books():
-        pass
-
     while True:
         # Main loop providing the Library Menu. Continues until the user chooses to exit.
         print("\n============LIBRARY MENU============ ]")
-        print("1. Display Available Books")
+        print("1. Add your own book")
         print("2. Borrow a Book")
         print("3. Return a Book")
         print("4. View Your Books")
-        print("5. Exit")
+        print("5. Display Available Books")
+        print("6. Exit")
 
         while True:
             # Makes sure the user inputs a number between 1 to 5
@@ -259,15 +236,15 @@ if __name__ == "__main__":
 
             if choice.isnumeric():
                 chint = int(choice)
-                if 1 <= chint and chint <= 5:
+                if 1 <= chint and chint <= 6:
                     break
-                print("Enter a number between 1 to 5.")
+                print("Enter a number between 1 to 6.")
             else:
-                print("Enter a number between 1 to 5.")
+                print("Enter a number between 1 to 6.")
 
         # Call the function that the user chose
         if choice == '1':
-            library.display_available_books()
+            library.add_books()
         elif choice == '2':
             library.borrow_book(current_user)
         elif choice == '3':
@@ -275,5 +252,7 @@ if __name__ == "__main__":
         elif choice == '4':
             library.view_borrowed_books(current_user)
         elif choice == '5':
+            library.display_available_books()
+        elif choice == '6':
             print("Exiting Library System...")
             break # Exit the main loop
