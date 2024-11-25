@@ -84,23 +84,23 @@ class Library:
 
         self.library_books = {
             1:Book(1, "Foundation of Software engineering"),
-            2:Book(2, "Mystery of the SCarred Schoolboys"),
+            2:Book(2, "Mystery of the Scarred Schoolboys"),
             3:Book(3, "Sign of the artificial Pearls")
         }
 
     def add_books(self):
+        
         while True:
-            while True:
-                user_book = input("Enter your book's name: ").strip()
-                if is_alpha_numeric(user_book):  # Check if the book name is alphanumeric
-                    user_book_lower = user_book.lower()
-                    # Check if the book is already available in the library
-                    if any(user_book_lower == book.name.lower() for book in library.library_books.values()):
-                        print("This book is already in the library, please enter a unique name.")
-                    else:
-                        break
-                else:
-                    print("Please enter an alphanumeric name.")
+            user_book = input("Enter your book's name: ").strip()
+            if is_alpha_numeric(user_book) is False:
+                print("Please enter an alphanumeric name.")
+                continue
+            user_book = user_book.lower()
+            if any(user_book == book.name.lower() for book in library.library_books.values()):
+                print("This book is already in the library, please enter a unique name.")
+                continue
+            else:
+                pass
 
             book_id_ = sorted(library.library_books.keys())[-1] + 1
             if book_id_ not in library.library_books:
@@ -138,16 +138,16 @@ class Library:
         self.display_available_books()
         while True:
             book_name = input("\nEnter the name of the book you want to borrow: ")
-            if is_alpha_numeric(book_name):
-                book_titles = [
-                    book.name
-                    for book in self.library_books.values()
-                    if book.availability == "Free"
-                    ]
-                closest_match = get_closest_match(book_name, book_titles)
-                break
-            else:
-                print("\nPlease enter an alphanumeric name.")
+            if is_alpha_numeric(book_name) is False:
+                print("Please enter an alphanumeric name.")
+                continue
+            book_titles = [
+                book.name
+                for book in self.library_books.values()
+                if book.availability == "Free"
+            ]
+            closest_match = get_closest_match(book_name, book_titles)
+            break
 
         if closest_match:
             # CLosest match to the book that is borrowed
