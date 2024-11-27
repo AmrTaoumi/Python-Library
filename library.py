@@ -89,7 +89,7 @@ class Library:
         }
 
     def add_books(self):
-        
+
         while True:
             user_book = input("Enter your book's name: ").strip()
             if is_alpha_numeric(user_book) is False:
@@ -163,17 +163,16 @@ class Library:
         # User returns a book
         while True:
             book_name = input("Enter the title of the book you want to return: ")
-            if is_alpha_numeric(book_name):
-                # Checks if the name of the book is alphanumeric
-                book_titles = [
-                    book.name
-                    for book in self.library_books.values()
-                    if book.borrower == username
-                    ]
-                closest_match = get_closest_match(book_name, book_titles)
-                break
-            else:
+            if is_alpha_numeric(book_name) is False:
                 print("Please enter an alphanumeric name.")
+                continue
+            book_titles = [
+                book.name
+                for book in self.library_books.values()
+                if book.borrower == username
+                ]
+            closest_match = get_closest_match(book_name, book_titles)
+            break
 
         if closest_match:
             # CLosest match to the book that is borrowed
